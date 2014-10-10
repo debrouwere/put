@@ -12,9 +12,11 @@ types =
 
 noop = ->
 
-finish = (err) ->
+finish = (options..., err) ->
+    options = options[0] or {}
+
     if err
-        if program.strict
+        if options.strict
             throw err
         else
             console.log err
@@ -26,6 +28,7 @@ rejigger = (operation, sourcePattern, destinationPattern, options={}, callback=n
 
     head = fs.path.resolve sourceTemplate.head
     finder = fs.find head
+    finishWithOptions = _.partial finish, options
 
     finder.on 'file', (source, stats) ->
         if match = sourceTemplate.match source
@@ -40,11 +43,11 @@ rejigger = (operation, sourcePattern, destinationPattern, options={}, callback=n
                             when 'copy'
                                 stream = fs.createReadStream source
                                 stream.pipe fs.createWriteStream destination
-                                stream.on 'finish', finish
+                                stream.on 'finish', finishWithOptions
                             when 'move'
-                                fs.rename source, destination, finish
+                                fs.rename source, destination, finishWithOptions
                             when 'link'
-                                fs.symlink source, destination, finish
+                                fs.symlink source, destination, finishWithOptions
                             else
                                 throw new Error "Invalid operation. Got #{operation}.
                                     Expected: copy, move or link."

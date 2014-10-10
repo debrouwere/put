@@ -1,6 +1,6 @@
 {
   "name": "put-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A command-line utility to move, rename, copy and symlink files, uses simple placeholders rather than regular expressions.",
   "main": "lib/index.js",
   "scripts": {
